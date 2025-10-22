@@ -1,48 +1,69 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../auth/hooks/useAuth';
-import Loader from '../../../components/Loader';
-import RentalList from '../components/RentalList';
-import Modal from '../../../components/Modal'; // Importamos el Modal
-import EditRentalForm from '../components/EditRentalForm'; // Importamos el formulario de edición
+import React, { useState } from "react";
+import { useAuth } from "../../auth/hooks/useAuth";
+import Loader from "../../../components/Loader";
+import RentalList from "../components/RentalList";
+import Modal from "../../../components/Modal";
+import EditRentalForm from "../components/EditRentalForm";
+import RentalDetail from "../components/RentalDetail"; // 👈 Importamos este
 
 function MyRentalsPage() {
   const { user, loading } = useAuth();
-  
-  // --- ¡NUEVO ESTADO! ---
-  // 'rentalToEdit' guardará el objeto del alquiler que queremos editar
   const [rentalToEdit, setRentalToEdit] = useState(null);
+  const [selectedRental, setSelectedRental] = useState(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const handleEditSuccess = () => {
-    setRentalToEdit(null); // Cierra el modal
-    window.location.reload(); // Refresca la página para ver los cambios
+    setRentalToEdit(null);
+    window.location.reload();
   };
 
-  if (loading) {
-    return <Loader />;
-  }
+  const handleRentalClick = (rental) => {
+    setSelectedRental(rental);
+    setIsDetailModalOpen(true);
+  };
+
+  const closeDetailModal = () => {
+    setSelectedRental(null);
+    setIsDetailModalOpen(false);
+  };
+
+  if (loading) return <Loader />;
 
   return (
     <>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Mis Alquileres</h1>
-        
-        {/* Le pasamos una función a RentalList para que pueda abrir el modal */}
-        {user?.id && <RentalList userId={user.id} onEditClick={setRentalToEdit} />}
+
+        {user?.id && (
+          <RentalList
+            userId={user.id}
+            onEditClick={setRentalToEdit}
+            onRentalClick={handleRentalClick} // 👈 Pasamos la función
+          />
+        )}
       </div>
 
-      {/* --- ¡NUEVO MODAL! --- */}
-      <Modal 
-        isOpen={!!rentalToEdit} 
-        onClose={() => setRentalToEdit(null)} 
+      {/* Modal para EDITAR */}
+      <Modal
+        isOpen={!!rentalToEdit}
+        onClose={() => setRentalToEdit(null)}
         title="Editar Alquiler"
       >
-        {/* Solo renderiza el formulario si hay un rental para editar */}
         {rentalToEdit && (
-          <EditRentalForm 
+          <EditRentalForm
             rentalToEdit={rentalToEdit}
             onEditSuccess={handleEditSuccess}
           />
         )}
+      </Modal>
+
+      {/* Modal para DETALLES */}
+      <Modal
+        isOpen={isDetailModalOpen}
+        onClose={closeDetailModal}
+        title={selectedRental?.title || "Detalles del Alquiler"}
+      >
+        {selectedRental && <RentalDetail rental={selectedRental} />}
       </Modal>
     </>
   );

@@ -4,11 +4,12 @@ import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../modules/auth/hooks/useAuth';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
-// --- CORRECCIÓN APLICADA ---
 import { getAllRentals } from '../../../api/apiRentals.js';
 import Modal from '../../../components/Modal.jsx';
 import Loader from '../../../components/Loader.jsx';
 import CrearRentaForm from '../components/CrearRentaForm.jsx';
+import RentalDetail from '../components/RentalDetail.jsx';
+
 
 // --- CONFIGURACIÓN DE LEAFLET ---
 delete L.Icon.Default.prototype._getIconUrl;
@@ -75,7 +76,6 @@ function MapaRentalsPage() {
         }
       });
       if (!response.ok) {
-        // --- AÑADE ESTA LÍNEA ---
         console.error('Respuesta de Nominatim:', response.status, response.statusText);
         throw new Error('La petición a Nominatim fue rechazada.');
       }
@@ -96,6 +96,20 @@ function MapaRentalsPage() {
     cerrarModal();
     window.location.reload();
   };
+
+const [selectedRental, setSelectedRental] = useState(null);
+const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+const handleMarkerClick = (rental) => {
+  setSelectedRental(rental);
+  setIsDetailModalOpen(true);
+};
+
+const closeDetailModal = () => {
+  setSelectedRental(null);
+  setIsDetailModalOpen(false);
+};
+
 
   if (loading) {
     return <Loader />;
@@ -119,12 +133,10 @@ function MapaRentalsPage() {
           <Marker 
             key={rental.id} 
             position={[rental.lat, rental.lng]}
+            eventHandlers={{
+              click: () => handleMarkerClick(rental),
+            }}
           >
-            <Popup>
-              <strong>{rental.title}</strong><br />
-              {rental.location}<br />
-              ${rental.price}
-            </Popup>
           </Marker>
         ))}
 
@@ -150,6 +162,19 @@ function MapaRentalsPage() {
           locationData={nuevaUbicacion}
         />
       </Modal>
+
+      <Modal
+        isOpen={isDetailModalOpen}
+        onClose={closeDetailModal}
+        title={selectedRental?.title || "Detalle de la Renta"}
+      >
+        {selectedRental ? (
+          <RentalDetail rental={selectedRental} />
+        ) : (
+          <p>Cargando información...</p>
+        )}
+      </Modal>
+
     </div>
   );
 }
