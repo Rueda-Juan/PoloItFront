@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../auth/hooks/useAuth';
-// --- ¡CAMBIO! Importamos la función correcta de la API correcta ---
-import { updateUser } from '../../../api/apiUsers'; 
+import { updateUser } from '../../../api/apiUser'; 
 import Loader from '../../../components/Loader';
 
 function EditProfilePage() {

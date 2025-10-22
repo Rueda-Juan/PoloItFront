@@ -1,14 +1,12 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// Importa tus páginas
+// Importa solo las páginas que realmente existen
 import MapaRentalsPage from '../modules/rentals/pages/MapaRentalsPage';
 import MyRentalsPage from '../modules/rentals/pages/MyRentalsPage';
 import ProfilePage from '../modules/user/pages/ProfilePage';
-import LoginPage from '../modules/auth/pages/LoginPage';
-import RegisterPage from '../modules/auth/pages/RegisterPage';
+import EditProfilePage from '../modules/user/pages/EditProfilePage'; // Asegúrate de que esta esté importada
 
-// --- ¡IMPORTAMOS EL PROTECTOR! ---
 import ProtectedRoute from './ProtectedRoute';
 
 function AppRouter() {
@@ -16,14 +14,14 @@ function AppRouter() {
     <Routes>
       {/* --- RUTAS PÚBLICAS --- */}
       <Route path="/" element={<MapaRentalsPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element ={<RegisterPage/>}/>
-
+      <Route path="/perfil/:userId" element={<ProfilePage />} />
+      
+      {/* Las rutas de /login y /register se eliminan */}
 
       {/* --- RUTAS PROTEGIDAS --- */}
       <Route element={<ProtectedRoute />}>
         <Route path="/mis-rentals" element={<MyRentalsPage />} />
-        <Route path="/perfil/:userId" element={<ProfilePage />} />
+        <Route path="/perfil/editar" element={<EditProfilePage />} />
       </Route>
 
       {/* Ruta para cuando no se encuentra la página */}

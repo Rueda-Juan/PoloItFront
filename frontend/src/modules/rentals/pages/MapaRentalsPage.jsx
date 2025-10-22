@@ -3,14 +3,14 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaf
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../modules/auth/hooks/useAuth';
-import { HiOutlineInformationCircle } from 'react-icons/hi'; 
+import { HiOutlineInformationCircle } from 'react-icons/hi';
+// --- CORRECCIÓN APLICADA ---
 import { getAllRentals } from '../../../api/apiRentals.js';
 import Modal from '../../../components/Modal.jsx';
 import Loader from '../../../components/Loader.jsx';
-import CrearRentaForm from './CrearRental.jsx';
+import CrearRentaForm from '../components/CrearRentaForm.jsx';
 
 // --- CONFIGURACIÓN DE LEAFLET ---
-// (Arreglo de íconos... sin cambios)
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -18,27 +18,22 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+const center = [-34.92136, -57.9545];
 
-// Centro inicial del mapa
-const center = [-34.92136, -57.9545]; // [Lat, Lng]
-
-// --- ¡COMPONENTE INTERNO ACTUALIZADO! ---
-// Este componente ahora maneja la lógica de autenticación al hacer clic
 function HandleMapClick({ onMapClick }) {
-  const { isAuthenticated, loading } = useAuth(); // Obtenemos el estado de auth
-  const navigate = useNavigate(); // Para redirigir
+  const { isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
 
   useMapEvents({
     click(e) {
-      if (loading) return; // Si auth sigue cargando, no hacer nada
-
-      // 1. Verificamos si está autenticado
+      if (loading) return;
       if (!isAuthenticated) {
-        // 2. Si no, alertamos y redirigimos
+        // Esta redirección ahora es manejada por el modal de login
+        // pero la dejamos como un respaldo.
         alert("Debes iniciar sesión para crear un rental.");
-        navigate('/login');
+        // En una app con modales, sería mejor abrir el modal de login aquí.
+        // navigate('/login'); 
       } else {
-        // 3. Si está logueado, ejecutamos la función original
         const { lat, lng } = e.latlng;
         onMapClick(lat, lng);
       }
@@ -47,14 +42,13 @@ function HandleMapClick({ onMapClick }) {
   return null;
 }
 
-// --- PÁGINA PRINCIPAL DEL MAPA ---
 function MapaRentalsPage() {
   const [rentals, setRentals] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading de los *rentals*
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [nuevaUbicacion, setNuevaUbicacion] = useState({ lat: null, lng: null, location: '' });
+  const { isAuthenticated, loading: authLoading } = useAuth();
 
-  // Carga inicial de rentals (esto es público, está bien)
   useEffect(() => {
     const cargarRentals = async () => {
       try {
@@ -70,15 +64,22 @@ function MapaRentalsPage() {
     cargarRentals();
   }, []);
 
-  // Lógica de Geocoding (ahora solo se llama si el usuario está logueado)
   const handleMapClick = async (lat, lng) => {
     setIsModalOpen(true);
     setNuevaUbicacion({ lat, lng, location: 'Cargando dirección...' });
 
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`, {
+        headers: {
+          'User-Agent': 'RentalMap/1.0 (tu-correo@ejemplo.com)'
+        }
+      });
+      if (!response.ok) {
+        // --- AÑADE ESTA LÍNEA ---
+        console.error('Respuesta de Nominatim:', response.status, response.statusText);
+        throw new Error('La petición a Nominatim fue rechazada.');
+      }
       const data = await response.json();
-      
       if (data && data.display_name) {
         setNuevaUbicacion({ lat, lng, location: data.display_name });
       } else {
@@ -91,34 +92,29 @@ function MapaRentalsPage() {
   };
 
   const cerrarModal = () => setIsModalOpen(false);
-
-  // eslint-disable-next-line no-unused-vars
   const handleRentalCreado = (nuevaRenta) => {
     cerrarModal();
-    window.location.reload(); // Refrescamos la página
+    window.location.reload();
   };
 
-  // Muestra el loader mientras carga los rentals
   if (loading) {
     return <Loader />;
   }
 
   return (
-    // --- ¡CAMBIO DE LAYOUT! ---
-    // Ajustamos la altura para que no quede debajo del navbar (h-16 o 4rem)
-    <div className="relative w-full" style={{ height: 'calc(100vh - 4rem)' }}> 
+    <div className="relative w-full" style={{ height: 'calc(100vh - 7.5rem)' }}> 
       
       <MapContainer 
         center={center} 
         zoom={13} 
-        style={{ width: '100%', height: '100%' }} // El mapa llena el div padre
+        style={{ width: '100%', height: '100%' }}
+        className="z-10"
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Pines de rentals existentes (sin cambios) */}
         {rentals.map((rental) => (
           <Marker 
             key={rental.id} 
@@ -132,20 +128,18 @@ function MapaRentalsPage() {
           </Marker>
         ))}
 
-        {/* ¡Este componente ahora tiene la lógica de auth! */}
         <HandleMapClick onMapClick={handleMapClick} />
-        
       </MapContainer>
 
-      {/* --- ¡TEXTO DEL BOTÓN ACTUALIZADO! --- */}
-      <div
-        className="absolute bottom-8 right-8 z-[1000] p-4 bg-purple-600 text-white rounded-lg shadow-lg flex items-center gap-3"
-      >
-        <HiOutlineInformationCircle size={28} />
-        <span>Haz clic en el mapa para añadir una renta (requiere login)</span>
-      </div>
+      {!authLoading && !isAuthenticated && (
+        <div
+          className="absolute bottom-8 right-8 z-20 p-4 bg-purple-600 text-white rounded-lg shadow-lg flex items-center gap-3"
+        >
+          <HiOutlineInformationCircle size={28} />
+          <span>Haz clic en el mapa para añadir una renta (requiere login)</span>
+        </div>
+      )}
 
-      {/* --- MODAL (sin cambios) --- */}
       <Modal 
         isOpen={isModalOpen} 
         onClose={cerrarModal} 
@@ -156,7 +150,6 @@ function MapaRentalsPage() {
           locationData={nuevaUbicacion}
         />
       </Modal>
-
     </div>
   );
 }

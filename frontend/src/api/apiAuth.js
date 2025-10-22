@@ -1,6 +1,7 @@
 // src/api/apiAuth.js
 
-const API_URL = "https://proyectopoloit.onrender.com/auth";
+const BASE_URL = import.meta.env.VITE_API_URL;
+const API_URL = `${BASE_URL}/auth`;
 
 /**
  * Registrar un nuevo usuario

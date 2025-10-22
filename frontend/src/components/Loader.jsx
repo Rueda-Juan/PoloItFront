@@ -4,7 +4,7 @@ function Loader() {
   return (
     <div 
       className="flex justify-center items-center w-full" 
-      style={{ height: 'calc(100vh - 4rem)' }} 
+      style={{ height: 'calc(100vh - 7.5rem)' }} 
     >
       {/* Este es el spinner */}
       <div 

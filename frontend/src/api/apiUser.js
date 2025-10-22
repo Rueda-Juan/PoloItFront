@@ -1,7 +1,8 @@
 // --- ¡IMPORTANTE! Importamos el helper de autenticación ---
 import { authHeaders } from './apiAuth';
 
-const API_URL = import.meta.env.VITE_API_URL || "https://proyectopoloit.onrender.com/users";
+const BASE_URL = import.meta.env.VITE_API_URL;
+const API_URL=`${BASE_URL}/users`;
 
 export const getAllUsers = async () => {
   try {
