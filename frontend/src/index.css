@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Overrides mínimos */
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  @apply flex items-center min-h-screen min-w-[320px];
+}
+
+/* Opcional: estilos globales para links y botones */
+a {
+  @apply font-medium text-linkBlue no-underline;
+}
+a:hover {
+  @apply text-linkBlueHover;
+}
+
+button {
+  @apply rounded-lg border border-transparent px-6 py-2 text-base font-medium bg-gray-900 cursor-pointer transition-colors;
+}
+button:hover {
+  @apply border-linkBlue;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
