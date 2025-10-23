@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiMapPin, FiMaximize, FiUsers, FiDollarSign } from 'react-icons/fi';
+import imagenDefault from "/Gemini_Generated_Image_i8e7jwi8e7jwi8e7.png"
 
 function RentalDetail({ rental, onClose }) {
   if (!rental) return null;
 
-  const imageUrl = rental.photos?.[0]?.url || `https://via.placeholder.com/600x400.png?text=${rental.title.replace(/\s/g, '+')}`;
+  const imageUrl = imagenDefault;
 
   return (
     <div className="flex flex-col">

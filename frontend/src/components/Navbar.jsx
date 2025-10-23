@@ -24,7 +24,7 @@ function Navbar({ onLoginClick }) {
       {/* ZONA 1: LOGO */}
       <div className="flex justify-center items-center h-14 border-b border-gray-100">
         <Link to="/" className="text-2xl font-bold text-gray-800 hover:text-purple-600 transition-colors">
-          RentalMap
+          AlquiMaps
         </Link>
       </div>
 

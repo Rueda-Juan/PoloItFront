@@ -2,11 +2,12 @@ import React from 'react';
 import { useAuth } from '../../auth/hooks/useAuth';
 import { deleteRental } from '../../../api/apiRentals';
 import { FiMapPin, FiDollarSign, FiEdit, FiTrash2 } from 'react-icons/fi';
+import imagenDefault from "/Gemini_Generated_Image_i8e7jwi8e7jwi8e7.png"
 
 function RentalCard({ rental, onEditClick, onRentalClick }) {
   const { user: loggedInUser, isAuthenticated } = useAuth();
   const isOwner = isAuthenticated && loggedInUser && loggedInUser.id === rental.user?.id;
-  const imageUrl = rental.photos?.[0]?.url || `https://via.placeholder.com/400x300.png?text=${rental.title.replace(/\s/g, '+')}`;
+  const imageUrl = imagenDefault;
 
   const handleDelete = async (e) => {
     e.stopPropagation();
