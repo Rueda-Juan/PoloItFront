@@ -109,7 +109,29 @@ La aplicación estará disponible en http://localhost:5173.
 📜 Scripts Disponibles
 En el directorio del proyecto, puedes ejecutar los siguientes comandos:
 
-<table> <thead> <tr> <th>Comando</th> <th>Descripción</th> </tr> </thead> <tbody> <tr> <td><code>pnpm run dev</code></td> <td>Inicia la aplicación en modo desarrollo con Hot-Reload.</td> </tr> <tr> <td><code>pnpm run build</code></td> <td>Compila la aplicación para producción en la carpeta <code>dist/</code>.</td> </tr> <tr> <td><code>pnpm run lint</code></td> <td>Ejecuta ESLint para analizar el código en busca de errores.</td> </tr> <tr> <td><code>pnpm run preview</code></td> <td>Levanta un servidor local para previsualizar el build de producción.</td> </tr> </tbody> </table>
+<table> 
+  <thead> 
+    <tr> 
+      <th>Comando</th> 
+      <th>Descripción</th> 
+    </tr> 
+  </thead>
+  <tbody> 
+    <tr> 
+      <td><code>pnpm run dev</code></td> 
+      <td>Inicia la aplicación en modo desarrollo con Hot-Reload.</td> </tr> 
+    <tr> 
+      <td><code>pnpm run build</code></td> 
+      <td>Compila la aplicación para producción en la carpeta <code>dist/</code>.</td> </tr> 
+    <tr> 
+      <td><code>pnpm run lint</code></td> 
+      <td>Ejecuta ESLint para analizar el código en busca de errores.</td> </tr> 
+    <tr> 
+      <td><code>pnpm run preview</code></td> 
+      <td>Levanta un servidor local para previsualizar el build de producción.</td> 
+    </tr> 
+  </tbody> 
+</table>
 
 ---
 
@@ -131,3 +153,6 @@ src
 ```
 📄 Licencia
 Este proyecto está bajo la Licencia MIT.
+
+Desarrollado por:
+<div align="center"><strong>Rueda Juan Bautista</strong> <br> <h1>AlquiMaps</h1></div>
